@@ -37,18 +37,17 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextOverflow
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
-import androidx.navigation.NavHost
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ferbotz.calculatortest.ui.theme.CalculatorTestTheme
 
@@ -58,36 +57,34 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CalculatorTestTheme {
-                CalculatorApp()
+                App()
             }
         }
     }
 }
-//@Composable
-//fun RowScope.BottomNavigationItem(
-//    selected: Boolean,
-//    onClick: () -> Unit,
-//    icon: @Composable () -> Unit,
-//    modifier: Modifier = Modifier,
-//    enabled: Boolean = true,
-//    label: @Composable (() -> Unit)? = null,
-//    alwaysShowLabel: Boolean = true,
-//    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-//    selectedContentColor: Color = LocalContentColor.current,
-//    unselectedContentColor: Color = selectedContentColor.copy(alpha = ContentAlpha.medium)
-//)
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BottomNavigationBar() {
-
     val navController = rememberNavController()
+    NavHost(navController = navController, startDestination = BottomNav.Home.route) {
+        composable(BottomNav.Search.route) {
+            CalculatorContent()
+        }
+        composable(BottomNav.Home.route) {
+
+        }
+        composable(BottomNav.Profile.route) {
+
+        }
+
+    }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             NavigationBar {
                 BottomNavigationItem().bottomNavigationItems().forEachIndexed {index,navigationItem ->
                     NavigationBarItem(
-                        selected = index == 1,
+                        selected = index == 0,
                         label = {
                             Text(navigationItem.label)
                         },
@@ -101,11 +98,11 @@ fun BottomNavigationBar() {
                             Log.e("PrintBottom ",index.toString())
                             var navigationSelectedItem = index
                             navController.navigate(navigationItem.route) {
-//                                popUpTo(navController.graph.findStartDestination().id) {
-//                                    saveState = true
-//                                }
-//                                launchSingleTop = true
-//                                restoreState = true
+                                popUpTo(navController.graph.findStartDestination().id) {
+                                    saveState = true
+                                }
+                                launchSingleTop = true
+                                restoreState = true
                             }
                         }
                     )
@@ -118,8 +115,7 @@ fun BottomNavigationBar() {
     }
 }
 @Composable
-fun CalculatorApp() {
-
+fun App() {
     CalculatorTestTheme {
         Scaffold(
             topBar = {
@@ -137,7 +133,7 @@ fun CalculatorApp() {
                         .padding(paddingValues),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    CalculatorContent()
+                  //  CalculatorContent()
                 }
             }
         )

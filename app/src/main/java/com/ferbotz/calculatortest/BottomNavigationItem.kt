@@ -17,17 +17,17 @@ data class BottomNavigationItem(
             BottomNavigationItem(
                 label = "Home",
                 icon = Icons.Filled.Home,
-                route = ""
+                route = "home_route"
             ),
             BottomNavigationItem(
                 label = "Search",
                 icon = Icons.Filled.Search,
-                route = ""
+                route = "search_route"
             ),
             BottomNavigationItem(
                 label = "Profile",
                 icon = Icons.Filled.AccountCircle,
-                route = ""
+                route = "profile_route"
             ),
         )
     }
