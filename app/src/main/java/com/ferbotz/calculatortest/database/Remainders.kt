@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "note_table")
 data class Remainders(
-    @PrimaryKey(autoGenerate = true) val  noteId:Int?,
+    @PrimaryKey(autoGenerate = true) val noteId:Int?,
     @ColumnInfo val hint:String
 )

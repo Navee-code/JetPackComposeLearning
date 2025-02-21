@@ -8,6 +8,9 @@ import androidx.compose.runtime.getValue
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -24,6 +27,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 
@@ -39,6 +43,9 @@ import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 
 import androidx.compose.ui.Modifier
@@ -54,31 +61,40 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.ferbotz.calculatortest.database.AppDb
+import com.ferbotz.calculatortest.database.Remainders
 import com.ferbotz.calculatortest.ui.theme.CalculatorTestTheme
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private val db: AppDb by lazy {
-        Log.e("NoteID","DB init")
         AppDb.getDatabase(this)
     }
-    private  val db1 =AppDb.getDatabase(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
+          Log.e("valuExtension ",null.method());
         setContent {
             CalculatorTestTheme {
-                db
-                db
+                createDb(db)
                 App()
-
             }
         }
     }
 }
-fun createDb(){
- //   db=AppDb.getDatabase(this)
+
+fun Any?.method(): String{
+    if(this == null) return "null"
+    return toString()
+}
+
+fun createDb(db:AppDb){
+    GlobalScope.launch {
+        db.noteDao().insertNote(Remainders(null,"main text"))
+    }
+
 
 }
 @Composable
@@ -105,24 +121,31 @@ fun LazyColum() {
         }
     }
 }
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun BottomNavigationBar() {
     val navController = rememberNavController()
+    var selectedIndex by remember { mutableStateOf(0) }
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            NavigationBar {
+            NavigationBar(
+                modifier = Modifier
+                    .padding(8.dp) // Adds spacing from the edges
+                    .clip(RoundedCornerShape(160.dp)), // Makes the edges rounded
+                containerColor = Color.White
+            ){
                 BottomNavigationItem().bottomNavigationItems().forEachIndexed {index,navigationItem ->
+                    
+
                     NavigationBarItem(
-                        selected = index == 0,
+                        selected = selectedIndex == index,
                         label = {
                             Text(navigationItem.label)
                         },
                         icon = {
                             Icon(
                                 navigationItem.icon,
-                                contentDescription = navigationItem.label
+                                contentDescription = navigationItem.label,
                             )
                         },
                         onClick = {
