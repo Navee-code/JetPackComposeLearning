@@ -1,15 +1,16 @@
 package com.ferbotz.calculatortest
 
 
+import android.annotation.SuppressLint
 import android.os.Bundle
-import android.util.Log
+import android.widget.Toast
 import androidx.compose.runtime.getValue
 
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
+
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 
@@ -23,12 +24,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 
 import androidx.compose.material3.MaterialTheme
@@ -55,6 +62,9 @@ import androidx.compose.ui.text.style.TextAlign
 
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -63,61 +73,91 @@ import androidx.navigation.compose.rememberNavController
 import com.ferbotz.calculatortest.database.AppDb
 import com.ferbotz.calculatortest.database.Remainders
 import com.ferbotz.calculatortest.ui.theme.CalculatorTestTheme
-import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 class MainActivity : ComponentActivity() {
-    private val db: AppDb by lazy {
-        AppDb.getDatabase(this)
-    }
 
+
+    @SuppressLint("CoroutineCreationDuringComposition")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-          Log.e("valuExtension ",null.method());
+        val application = application as AppApplication
         setContent {
             CalculatorTestTheme {
-                createDb(db)
+                lifecycleScope.launch (Dispatchers.IO){
+                    application.db.noteDao().insertNote(Remainders(null,"main text"))
+                    withContext(Dispatchers.Main){
+
+                    }
+                }
                 App()
             }
         }
     }
 }
 
-fun Any?.method(): String{
-    if(this == null) return "null"
-    return toString()
-}
-
-fun createDb(db:AppDb){
-    GlobalScope.launch {
-        db.noteDao().insertNote(Remainders(null,"main text"))
-    }
 
 
-}
 @Composable
 fun LazyColum() {
-    LazyColumn {
-        repeat(10000) { index ->
-            item {
-                Box( modifier = Modifier
-                    .fillMaxSize(),
-                    contentAlignment = Alignment.Center) {
+    var showDialog by remember { mutableStateOf(false) }
+    Box(modifier = Modifier.fillMaxSize()) {
+        LazyColumn {
+            items(10000) { index -> // Use items() instead of repeat
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    contentAlignment = Alignment.Center
+                ) {
                     Text(
                         text = "Value $index",
                         fontSize = 30.sp,
                         color = Color.White,
                         textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-
+                        modifier = Modifier.fillMaxWidth()
                     )
                 }
-
             }
+        }
+
+        FloatingActionButton(
+            onClick = {
+               showDialog = true
+            },
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp),
+            containerColor = Color.Blue
+        ) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+        }
+        if (showDialog) {
+            MinimalDialog{ showDialog = false }
+        }
+    }
+}
+@Composable
+fun MinimalDialog(onDismissRequest: () -> Unit) {
+    Dialog(onDismissRequest = { onDismissRequest() }) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(200.dp)
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Text(
+                text = "This is  dialog",
+                modifier = Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(Alignment.Center),
+                textAlign = TextAlign.Center,
+            )
         }
     }
 }
@@ -126,31 +166,34 @@ fun LazyColum() {
 fun BottomNavigationBar() {
     val navController = rememberNavController()
     var selectedIndex by remember { mutableStateOf(0) }
+
     Scaffold(
         bottomBar = {
             NavigationBar(
                 modifier = Modifier
-                    .padding(8.dp) // Adds spacing from the edges
-                    .clip(RoundedCornerShape(160.dp)), // Makes the edges rounded
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(160.dp)),
                 containerColor = Color.White
-            ){
-                BottomNavigationItem().bottomNavigationItems().forEachIndexed {index,navigationItem ->
-                    
+            ) {
+                BottomNavigationItem().bottomNavigationItems().forEachIndexed { index, navigationItem ->
+
+                    val animatedOffset by animateFloatAsState(
+                        targetValue = if (selectedIndex == index) -5f else 0f,
+                        animationSpec = tween(durationMillis = 100)
+                    )
 
                     NavigationBarItem(
                         selected = selectedIndex == index,
-                        label = {
-                            Text(navigationItem.label)
-                        },
+                        label = { Text(navigationItem.label) },
                         icon = {
                             Icon(
                                 navigationItem.icon,
                                 contentDescription = navigationItem.label,
+                                modifier = Modifier.offset(y = animatedOffset.dp) // Moves icon up when selected
                             )
                         },
                         onClick = {
-                            Log.e("PrintBottom ",index.toString())
-                            var navigationSelectedItem = index
+                            selectedIndex = index
                             navController.navigate(navigationItem.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
                                     saveState = true
@@ -164,29 +207,23 @@ fun BottomNavigationBar() {
             }
         }
     ) { paddingValues ->
-         print(paddingValues)
-        NavHost(navController = navController, startDestination = BottomNav.Home.route) {
-            composable(BottomNav.Search.route) {
-                CalculatorContent( )
+        Box(modifier = Modifier.padding(paddingValues)) {
+            NavHost(navController = navController, startDestination = BottomNav.Home.route) {
+                composable(BottomNav.Search.route) { CalculatorContent() }
+                composable(BottomNav.Home.route) { HomeBox() }
+                composable(BottomNav.Profile.route) {
+                    LazyColum()
+                }
             }
-            composable(BottomNav.Home.route) {
-                HomeBox()
-            }
-            composable(BottomNav.Profile.route) {
-                LazyColum()
-
-            }
-
         }
-
     }
 }
+
 @Composable
 fun App() {
     CalculatorTestTheme {
         Scaffold(
             topBar = {
-
             },
             bottomBar = {
                 NavigationBar {
@@ -200,7 +237,6 @@ fun App() {
                         .padding(paddingValues),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                  //  CalculatorContent()
                 }
             }
         )
@@ -384,34 +420,6 @@ fun CalculatorTestTheme(
         )
     }
 
-//    MaterialTheme(
-//        colorScheme = colorScheme,
-//        typography = Typography,
-//        content = content
-//    )
 }
 
 
-//    MaterialTheme(
-//        colorScheme = colorScheme,
-//        typography = Typography(),
-//        shapes = Shapes(),
-//        content = content
-//    )
-
-
-//@Composable
-//fun Greeting(name: String, modifier: Modifier = Modifier) {
-//    Text(
-//        text = "Hello $name!",
-//        modifier = modifier
-//    )
-//}
-//
-//@Preview(showBackground = true)
-//@Composable
-//fun GreetingPreview() {
-//    CalculatorTestTheme {
-//        Greeting("Android")
-//    }
-//}

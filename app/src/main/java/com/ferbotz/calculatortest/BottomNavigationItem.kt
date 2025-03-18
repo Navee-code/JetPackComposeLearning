@@ -1,5 +1,6 @@
 package com.ferbotz.calculatortest
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
@@ -11,6 +12,12 @@ data class BottomNavigationItem(
     val icon : ImageVector = Icons.Filled.Home,
     val route : String = ""
 ) {
+
+    var lambda = {a: Int , b: Int -> a * b }
+
+    val lambada1 ={ a:String, _:Int -> Log.e("Message",a)}
+
+    val home:String ="home_route"
 
     fun bottomNavigationItems() : List<BottomNavigationItem> {
         return listOf(
@@ -31,4 +38,21 @@ data class BottomNavigationItem(
             ),
         )
     }
+
+    fun kotlinFunction(num:String):String{
+        lambda(2,3)
+        lambada1("Eroor",2)
+       HighOrderKotlin {
+
+
+
+       }
+
+        return ""
+    }
+
+    fun HighOrderKotlin(callBack: (String) -> Unit){
+        callBack("CallBAck")
+    }
+
 }

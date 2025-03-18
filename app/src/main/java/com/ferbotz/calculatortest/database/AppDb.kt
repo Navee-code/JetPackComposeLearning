@@ -6,13 +6,13 @@ import androidx.room.Database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.ferbotz.calculatortest.AppConstants
 
 
 @Database(entities = [Remainders::class], version = 1, exportSchema = false)
 abstract class AppDb : RoomDatabase() {
 
     abstract fun noteDao(): AppDao
-
     companion object {
         @Volatile
         private var instance: AppDb? = null
@@ -25,7 +25,7 @@ abstract class AppDb : RoomDatabase() {
                 val instanceNew = Room.databaseBuilder(
                     context.applicationContext,
                     AppDb::class.java,
-                    "app_database"
+                    AppConstants.appDb
                 ).build()
                 instance = instanceNew
                 return instanceNew

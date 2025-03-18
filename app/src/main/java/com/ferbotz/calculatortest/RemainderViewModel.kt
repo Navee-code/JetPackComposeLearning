@@ -4,5 +4,4 @@ import androidx.lifecycle.ViewModel
 
 class RemainderViewModel:ViewModel(){
 
-
 }
