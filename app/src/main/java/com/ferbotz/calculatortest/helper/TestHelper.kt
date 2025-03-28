@@ -23,6 +23,9 @@ fun Any?.method(): String{
       return this+b
   }
 
+fun String.validateEmail() = this.isNotBlank() && android.util.Patterns.EMAIL_ADDRESS.matcher(this).matches()
+fun String.validateNumber() = this.isNotBlank() && this.matches(Regex("^(\\+91[\\s-]?)?\\d{10}$"))
+fun String.validatePassword() = this.isNotBlank() && this.length >= 6
 
 
 fun String.toast(context: Context, message :String){

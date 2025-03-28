@@ -1,4 +1,4 @@
-package com.ferbotz.calculatortest
+package com.ferbotz.calculatortest.bottomNavigation
 
 import android.util.Log
 import androidx.compose.material.icons.Icons
@@ -44,12 +44,10 @@ data class BottomNavigationItem(
         lambada1("Eroor",2)
        HighOrderKotlin {
 
-
-
        }
-
         return ""
     }
+
 
     fun HighOrderKotlin(callBack: (String) -> Unit){
         callBack("CallBAck")

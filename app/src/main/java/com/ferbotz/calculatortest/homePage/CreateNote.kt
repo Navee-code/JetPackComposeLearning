@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.ferbotz.calculatortest.AppApplication
 
 @Composable
-fun LazyColum() {
+fun RemainderNoteList() {
     var showDialog by remember { mutableStateOf(false) }
     val context = LocalContext.current.applicationContext as AppApplication
 }

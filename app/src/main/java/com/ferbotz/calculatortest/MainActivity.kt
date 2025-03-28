@@ -76,9 +76,11 @@ import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.ferbotz.calculatortest.bottomNavigation.BottomNavigationBar
 import com.ferbotz.calculatortest.database.Remainders
 import com.ferbotz.calculatortest.helper.log
 import com.ferbotz.calculatortest.homePage.CalculatorContent
+import com.ferbotz.calculatortest.homePage.RemainderNoteList
 import com.ferbotz.calculatortest.ui.theme.CalculatorTestTheme
 import kotlinx.coroutines.*
 import kotlinx.coroutines.launch
@@ -96,64 +98,9 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 @Composable
-fun BottomNavigationBar() {
-    val navController = rememberNavController()
-    var selectedIndex by remember { mutableIntStateOf(0) }
-    Scaffold(
-        bottomBar = {
-            NavigationBar(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(160.dp)),
-                containerColor = Color.White
-            ) {
-                BottomNavigationItem().bottomNavigationItems().forEachIndexed { index, navigationItem ->
+fun App2(){
 
-                    val animatedOffset by animateFloatAsState(
-                        targetValue = if (selectedIndex == index) -5f else 0f,
-                        animationSpec = tween(durationMillis = 100)
-                    )
-
-
-                    NavigationBarItem(
-                        selected = selectedIndex == index,
-                        label = { Text(navigationItem.label) },
-                        icon = {
-                            Icon(
-                                navigationItem.icon,
-                                contentDescription = navigationItem.label,
-                                modifier = Modifier.offset(y = animatedOffset.dp) // Moves icon up when selected
-                            )
-                        },
-                        onClick = {
-                            selectedIndex = index
-                            navController.navigate(navigationItem.route) {
-                                popUpTo(navController.graph.findStartDestination().id) {
-                                    saveState = true
-                                }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        }
-                    )
-                }
-            }
-        }
-    ) { paddingValues ->
-        Box(modifier = Modifier.padding(paddingValues)) {
-            NavHost(navController = navController, startDestination = BottomNav.Home.route) {
-
-                composable(BottomNav.Search.route) { CalculatorContent() }
-                composable(BottomNav.Home.route) {}
-                composable(BottomNav.Profile.route) {
-
-                   // LazyColum()
-                }
-            }
-        }
-    }
 }
 
 @Composable
@@ -164,7 +111,6 @@ fun App() {
             },
             bottomBar = {
                 NavigationBar {
-                    "Bottom Nav init".log("ViewMODelSCope")
                     BottomNavigationBar()
                 }
             },
