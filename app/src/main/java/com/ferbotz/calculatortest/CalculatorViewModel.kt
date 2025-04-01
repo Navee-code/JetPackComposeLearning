@@ -1,11 +1,15 @@
 package com.ferbotz.calculatortest
 
+import android.net.http.HttpException
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.ferbotz.calculatortest.database.Remainders
+import com.ferbotz.calculatortest.helper.log
+import com.ferbotz.calculatortest.retrofit.Client
+import com.ferbotz.calculatortest.retrofit.Gallery
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,11 +23,36 @@ class CalculatorViewModel : ViewModel() {
 
     private val homeText = MutableLiveData("Home Page")
     val data:LiveData<String> get() = homeText
+
+    private val wallet = MutableLiveData<MutableList<Gallery>>()
+    val _wallet:LiveData<MutableList<Gallery>> get() = wallet
     private val _notes = MutableStateFlow<List<Remainders>>(emptyList())
     val notes: StateFlow<List<Remainders>> = _notes.asStateFlow()
 
+    private  val photos = MutableStateFlow<List<Gallery>>(emptyList())
+    val _photos: StateFlow<List<Gallery>> get() = photos
+
     init {
         fetchNotes()
+    }
+    fun fetchPhotos() {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = Client.instance.getPhotos().execute()
+                if (response.isSuccessful) {
+                    val photo = response.body()
+                    photo?.let {
+                        photos.emit(photo)
+                        "Updating Composable Caluculater".log("ViewMODelSCope")
+                    }
+                   // _wallet.value = photos
+                }
+            } catch (e: Exception) {
+                Log.e("PhotoViewModel", "HTTP Error: ${"fd"}")
+            } catch (e: Exception) {
+                Log.e("PhotoViewModel", "Error: ${e.localizedMessage}")
+            }
+        }
     }
 
     private fun fetchNotes() {

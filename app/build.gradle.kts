@@ -71,7 +71,24 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
 
-    kapt(libs.room.compiler)
+        //  kapt(libs.room.compiler)
+
+
+
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+
+    //Retrofit
+     implementation(libs.coil.compose.network)
+    implementation(libs.coil.compose)
+
+
+    kapt(libs.dagger.complier)
+    implementation(libs.dagger.compose)
+
+
+
 
 
 }

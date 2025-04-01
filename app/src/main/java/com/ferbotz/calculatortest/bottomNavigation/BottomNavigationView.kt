@@ -28,7 +28,7 @@ import com.ferbotz.calculatortest.homePage.CalculatorContent
 import com.ferbotz.calculatortest.homePage.RemainderNoteList
 
 @Composable
-fun BottomNavigationBar() {
+fun  BottomNavigationBar() {
     val navController = rememberNavController()
     var selectedIndex by remember { mutableIntStateOf(0) }
     Scaffold(
@@ -41,12 +41,6 @@ fun BottomNavigationBar() {
             ) {
                 BottomNavigationItem().bottomNavigationItems().forEachIndexed { index, navigationItem ->
 
-                    val animatedOffset by animateFloatAsState(
-                        targetValue = if (selectedIndex == index) -5f else 0f,
-                        animationSpec = tween(durationMillis = 100)
-                    )
-
-
                     NavigationBarItem(
                         selected = selectedIndex == index,
                         label = { Text(navigationItem.label) },
@@ -54,7 +48,6 @@ fun BottomNavigationBar() {
                             Icon(
                                 navigationItem.icon,
                                 contentDescription = navigationItem.label,
-                                modifier = Modifier.offset(y = animatedOffset.dp) // Moves icon up when selected
                             )
                         },
                         onClick = {
@@ -76,8 +69,7 @@ fun BottomNavigationBar() {
             NavHost(navController = navController, startDestination = BottomNav.Home.route) {
                 composable(BottomNav.Search.route) { CalculatorContent() }
                 composable(BottomNav.Home.route) { RemainderNoteList() }
-                composable(BottomNav.Profile.route) {
-                }
+                composable(BottomNav.Profile.route) {}
             }
         }
     }

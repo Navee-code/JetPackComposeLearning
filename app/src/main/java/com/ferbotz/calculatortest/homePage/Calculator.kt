@@ -10,9 +10,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Modifier
@@ -25,7 +27,8 @@ import com.ferbotz.calculatortest.CalculatorAction
 import com.ferbotz.calculatortest.CalculatorButton
 import com.ferbotz.calculatortest.CalculatorViewModel
 import com.ferbotz.calculatortest.helper.log
-
+import com.ferbotz.calculatortest.retrofit.Gallery
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun CalculatorContent() {
@@ -33,6 +36,7 @@ fun CalculatorContent() {
     val textState by viewModel.text.observeAsState()
 
     "Updating Composable Caluculater".log("ViewMODelSCope")
+
 
     val buttonModifier = Modifier
         .size(80.dp)

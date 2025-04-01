@@ -93,15 +93,33 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CalculatorTestTheme {
+                lifecycleScope.launchWhenCreated {  }
                 App()
             }
         }
     }
 }
-@Composable
-fun App2(){
 
-}
+//@Composable
+//fun App2() {
+//    CalculatorTestTheme {
+//        Scaffold(
+//            topBar = {
+//
+//            },
+//            modifier = TODO(),
+//            bottomBar = TODO(),
+//            snackbarHost = TODO(),
+//            floatingActionButton = TODO(),
+//            floatingActionButtonPosition = TODO(),
+//            containerColor = TODO(),
+//            contentColor = TODO(),
+//            contentWindowInsets = TODO(),
+//            content = TODO(),
+//        )
+//    }
+//
+//}
 
 @Composable
 fun App() {
