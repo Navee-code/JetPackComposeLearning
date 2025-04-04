@@ -81,6 +81,7 @@ import com.ferbotz.calculatortest.database.Remainders
 import com.ferbotz.calculatortest.helper.log
 import com.ferbotz.calculatortest.homePage.CalculatorContent
 import com.ferbotz.calculatortest.homePage.RemainderNoteList
+import com.ferbotz.calculatortest.retrofit.Gallery
 import com.ferbotz.calculatortest.ui.theme.CalculatorTestTheme
 import kotlinx.coroutines.*
 import kotlinx.coroutines.launch
@@ -93,6 +94,18 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             CalculatorTestTheme {
+               val deffered = lifecycleScope.async(Dispatchers.Main) {
+                   delay(5000)
+                   "fd"
+               }
+
+
+
+                lifecycleScope.launch {
+                    deffered.await()
+
+                    Toast.makeText(this@MainActivity,"deffered wait",Toast.LENGTH_SHORT).show()
+                }
                 lifecycleScope.launchWhenCreated {  }
                 App()
             }

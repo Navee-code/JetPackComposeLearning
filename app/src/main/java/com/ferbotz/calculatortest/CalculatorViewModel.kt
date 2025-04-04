@@ -11,9 +11,13 @@ import com.ferbotz.calculatortest.helper.log
 import com.ferbotz.calculatortest.retrofit.Client
 import com.ferbotz.calculatortest.retrofit.Gallery
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.onEmpty
 import kotlinx.coroutines.launch
 
 class CalculatorViewModel : ViewModel() {
@@ -24,18 +28,23 @@ class CalculatorViewModel : ViewModel() {
     private val homeText = MutableLiveData("Home Page")
     val data:LiveData<String> get() = homeText
 
-    private val wallet = MutableLiveData<MutableList<Gallery>>()
-    val _wallet:LiveData<MutableList<Gallery>> get() = wallet
+    private val wallet = MutableLiveData<String>()
+    val _wallet:LiveData<String> get() = wallet
+
     private val _notes = MutableStateFlow<List<Remainders>>(emptyList())
     val notes: StateFlow<List<Remainders>> = _notes.asStateFlow()
 
     private  val photos = MutableStateFlow<List<Gallery>>(emptyList())
     val _photos: StateFlow<List<Gallery>> get() = photos
 
+    private val snackBar = MutableSharedFlow<String>()
+    val _snackBar:SharedFlow<String> get() = snackBar
+
     init {
         fetchNotes()
     }
     fun fetchPhotos() {
+        wallet.value = "fnjn"
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = Client.instance.getPhotos().execute()

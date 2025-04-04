@@ -67,7 +67,8 @@ fun  BottomNavigationBar() {
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             NavHost(navController = navController, startDestination = BottomNav.Home.route) {
-                composable(BottomNav.Search.route) { CalculatorContent() }
+                composable(BottomNav.Search.route) {
+                    CalculatorContent() }
                 composable(BottomNav.Home.route) { RemainderNoteList() }
                 composable(BottomNav.Profile.route) {}
             }

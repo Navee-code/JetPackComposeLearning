@@ -35,8 +35,11 @@ fun CalculatorContent() {
     val viewModel = viewModel<CalculatorViewModel>()
     val textState by viewModel.text.observeAsState()
 
-    "Updating Composable Caluculater".log("ViewMODelSCope")
+    viewModel.fetchPhotos()
 
+    "Updating Composable Caluculater".log("ViewMODelSCope")
+    val walletState by viewModel._wallet.observeAsState()
+     "{$walletState}".log("bioscope")
 
     val buttonModifier = Modifier
         .size(80.dp)
