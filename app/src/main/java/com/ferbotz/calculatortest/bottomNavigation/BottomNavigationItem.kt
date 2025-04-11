@@ -3,6 +3,7 @@ package com.ferbotz.calculatortest.bottomNavigation
 import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -32,8 +33,8 @@ data class BottomNavigationItem(
                 route = "search_route"
             ),
             BottomNavigationItem(
-                label = "Profile",
-                icon = Icons.Filled.AccountCircle,
+                label = "Note",
+                icon = Icons.Filled.DateRange,
                 route = "profile_route"
             ),
         )
